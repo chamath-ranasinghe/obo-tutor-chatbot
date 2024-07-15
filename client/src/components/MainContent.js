@@ -1,18 +1,42 @@
 // src/components/MainContent.js
-import React from 'react';
+import React, {useState } from 'react';
 import PromptInput from './PromptInput';
+import Chat from './Chat';
+import axios from 'axios'
+import cors from "cors"
+
 
 function MainContent({ isSidebarOpen }) {
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSendMessage = async (message) => {
+    setMessages([...messages, { text: message, type: 'user' }]);
+    setIsLoading(true);
+
+    // Request to model
+    const url = "http://localhost:8000/run-model";
+    const postData = {session_id:"abc1", user_id:"user123", input_text:message};
+
+    try{
+      const response = await axios.post(url,postData);
+      const botMessage = response.data.response
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: botMessage, type: 'bot' },
+      ]);
+
+    } catch(error){
+      console.error(error)
+    }
+
+    setIsLoading(false);
+  };
+
   return (
     <div className={`flex-grow flex flex-col ${isSidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300 font-sans`}>
-      <div className="flex-grow p-4 overflow-y-auto">
-        {/* Add main content here */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md mb-4">
-          <h2 className="text-lg font-bold mb-2">Obo Tutor</h2>
-          <p className="text-gray-700">Welcome to Obo Tutor. Start a new conversation or select a past chat from the left.</p>
-        </div>
-      </div>
-      <PromptInput />
+      <Chat messages={messages} isLoading={isLoading} />
+      <PromptInput onSendMessage={handleSendMessage} isLoading={isLoading} />
     </div>
   );
 }
