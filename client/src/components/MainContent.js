@@ -3,7 +3,6 @@ import React, {useState } from 'react';
 import PromptInput from './PromptInput';
 import Chat from './Chat';
 import axios from 'axios'
-import cors from "cors"
 
 
 function MainContent({ isSidebarOpen }) {

@@ -3,8 +3,6 @@ from pydantic import BaseModel
 from app_to_client import run_model
 from fastapi.middleware.cors import CORSMiddleware
 
-
-
 class Request(BaseModel):
     session_id:str
     user_id:str

@@ -15,3 +15,7 @@ langchainhub
 sentence_transformers
 langchain-groq
 groq
+fastapi
+pydantic
+fastapi-cors
+uvicorn
