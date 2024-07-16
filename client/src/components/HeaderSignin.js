@@ -12,7 +12,7 @@ function Header() {
         </div>
         <nav>
           <ul className="flex space-x-4">
-            <li><a href="/sign-up" className="text-gray-700 hover:text-black">Sign in</a></li>
+            <li><a href="/sign-up" className="text-gray-700 hover:text-black"></a></li>
           </ul>
         </nav>
       </div>
