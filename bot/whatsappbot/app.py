@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 import os
 import time
 
-from chain import create_chain
-from ChatStoreSQL import save_chat_history, load_chat_history
-from ChatSummarizer import summarize_chat_history
+from .chain import create_chain
+from .ChatStoreSQL import save_chat_history, load_chat_history
+from .ChatSummarizer import summarize_chat_history
 
 load_dotenv()
 os.environ["LANGCHAIN_TRACING_V2"]="true"
@@ -41,12 +41,9 @@ def run_model(session_id, user_id, input_text):
         chat_summary = ""
 
     if input_text:
-        start=time.process_time()
         chat_history = chat_history[-10:]
         chat_summary = chat_summary
         response = process_chat(chain, input_text, chat_history, chat_summary)
-        response_time = str(time.process_time()-start)
-        response_str = {"response":response, "response_time":response_time}
 
         chat_history.append(HumanMessage(content=input_text))
         chat_history.append(AIMessage(content=response))
@@ -55,4 +52,4 @@ def run_model(session_id, user_id, input_text):
         new_chat_summary = summarize_chat_history(chat_summary, chat_history)
         save_chat_history(session_id, user_id, chat_history, new_chat_summary)
 
-        return (response_str)
+        return (response)

@@ -5,6 +5,10 @@ client/node_modules
 client/.env
 model/.env
 server/.env
+bot/whatsappbot/.env
+bot/bot/__pycache__
+model/__pycache__
+bot/whatsappbot/__pycache__
 assets/
 /.pnp
 .pnp.js
