@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 import os
 import time
 
-from .chain import create_chain
-from .ChatStoreSQL import save_chat_history, load_chat_history
-from .ChatSummarizer import summarize_chat_history
+from chain import create_chain
+from ChatStoreSQL import save_chat_history, load_chat_history
+from ChatSummarizer import summarize_chat_history
 
 load_dotenv()
 os.environ["LANGCHAIN_TRACING_V2"]="true"

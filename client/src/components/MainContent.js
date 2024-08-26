@@ -19,7 +19,8 @@ function MainContent({ isSidebarOpen }) {
 
     try{
       const response = await axios.post(url,postData);
-      const botMessage = response.data.response
+      console.log(response);
+      const botMessage = response.data
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: botMessage, type: 'bot' },

@@ -7,7 +7,7 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from dotenv import load_dotenv
 import os
-from .PromptEng import get_template
+from PromptEng import get_template
 
 load_dotenv()
 groq_api_key=os.getenv('GROQ_API_KEY')
