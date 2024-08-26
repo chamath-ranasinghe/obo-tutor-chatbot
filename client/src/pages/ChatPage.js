@@ -11,7 +11,7 @@ function ChatPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <div className="flex flex-grow">
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} chatId="abc1" />
         <MainContent isSidebarOpen={isSidebarOpen} />
       </div>
       <Footer />

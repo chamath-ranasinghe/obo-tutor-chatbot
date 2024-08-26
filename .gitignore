@@ -2,6 +2,7 @@
 
 # dependencies
 client/node_modules
+model/venv
 client/.env
 model/.env
 server/.env
