@@ -94,3 +94,79 @@ def save_chat_summary(session_id, chat_summary):
     connection.commit()
     cursor.close()
     connection.close()
+
+
+def get_instruction(parameter):
+    connection = get_mysql_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # Execute the query with the given parameters
+    cursor.execute("""
+    SELECT instruction 
+    FROM PersonalizationInstructions 
+    WHERE parameter = %s
+    """, (parameter,))
+
+    # Fetch the result
+    result = cursor.fetchone()
+
+    # Close the cursor and connection
+    cursor.close()
+    connection.close()
+
+    return result['instruction']
+
+
+def get_personalization_params(chat_id):
+    # Connect to the MySQL database
+    conn = get_mysql_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # SQL query to fetch the personalization parameters
+    query = """
+    SELECT Chat_title, Student_type, Learning_style, Communication_format, Tone_style, Reasoning_framework 
+    FROM Chat_info 
+    WHERE ChatID = %s
+    """
+    cursor.execute(query, (chat_id,))
+    result = cursor.fetchone()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # Return the result as a dictionary
+    if result:
+        return {
+            "chat_title": result['Chat_title'],
+            "student_type": result['Student_type'],
+            "learning_style": result['Learning_style'],
+            "communication_format": result['Communication_format'],
+            "tone_style": result['Tone_style'],
+            "reasoning_framework": result['Reasoning_framework']
+        }
+    else:
+        return {}
+    
+
+def update_personalization_params(chat_id, chat_title, student_type, learning_style, communication_format, tone_style, reasoning_framework):
+    conn = get_mysql_connection()
+    cursor = conn.cursor()
+
+    query = """
+        UPDATE Chat_info
+        SET 
+            Chat_title = %s,
+            Student_type = %s,
+            Learning_style = %s,
+            Communication_format = %s,
+            Tone_style = %s,
+            Reasoning_framework = %s
+        WHERE 
+            ChatID = %s
+    """
+    cursor.execute(query, (chat_title, student_type, learning_style, communication_format, tone_style, reasoning_framework, chat_id))
+    conn.commit()
+    
+    cursor.close()
+    conn.close()

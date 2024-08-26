@@ -5,6 +5,8 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from langchain_core.prompts import MessagesPlaceholder
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
+from langchain.retrievers.self_query.base import SelfQueryRetriever
+from langchain.chains.query_constructor.base import AttributeInfo
 from dotenv import load_dotenv
 import os
 from PromptEng import get_template
@@ -13,22 +15,62 @@ load_dotenv()
 groq_api_key=os.getenv('GROQ_API_KEY')
 
 def create_chain(vectorStore):
-    model=ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.1-70b-versatile")
+    model=ChatGroq(groq_api_key=groq_api_key, model_name="mixtral-8x7b-32768")
     chain = create_stuff_documents_chain(
         llm=model,
         prompt=get_template(),
     )
-    retriever = vectorStore.as_retriever()
+
+
+    # Define metadata field information
+    metadata_field_info = [
+        AttributeInfo(
+            name="Course",
+            description='The course relevant to the document. You must pick one of "Programming", "3D Design" or "Other".',
+            type="string",
+        ),
+        AttributeInfo(
+            name="Subject",
+            description="The subject relevant to the document. One of 'Programming', 'Electronics', '3D Design', 'Manufacturing' or 'Other'.",
+            type="string",
+        ),
+        AttributeInfo(
+            name="Scope",
+            description="The scope of the document. One of 'Introduction', 'Basics', 'Lab Activity', 'Project' or 'Other'.",
+            type="string",
+        ),
+        AttributeInfo(
+            name="Difficulty_level",
+            description="The difficulty level of the content, on a scale of 1-5",
+            type="integer",
+        ),
+    ]
+
+    document_content_description = "Brief description of educational content"
+
+    # Get the base retriever
+    base_retriever = vectorStore.as_retriever()
+    self_query_retriever = SelfQueryRetriever.from_llm(
+        llm=model,
+        vectorstore=vectorStore,
+        document_contents=document_content_description,
+        metadata_field_info=metadata_field_info,
+    )
 
     retriever_prompt = ChatPromptTemplate.from_messages([
         MessagesPlaceholder(variable_name="chat_history"),
         ("human", "{input}"),
-        ("human", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation. Only provide the query, not other details. Capture as much context as possible. Keep the word count of search query to 40-60 words."),
+        ("human", "Given the above conversation, generate a search query to look up in order to get information relevant to the " +
+                "conversation from the knowledge base. Additionally we are filtering the database for the most relevant vectors before " +
+                "doing the similarity search. Filtering criteria are Course[one of 'Programming', '3D Design' or 'Other'], Subject[one " +
+                "of 'Programming', 'Electronics', '3D Design', 'Manufacturing' or 'Other'], Scope[one of 'Introduction', 'Basics', " +
+                "'Lab Activity', 'Project' or 'Other'], Difficulty_level[1-5]. Your response must contain the search query and the " +
+                "filtering criteria. Do not include anything else."),
     ])
 
     history_aware_retriever = create_history_aware_retriever(
         llm=model,
-        retriever=retriever,
+        retriever=self_query_retriever,
         prompt=retriever_prompt
     )
 

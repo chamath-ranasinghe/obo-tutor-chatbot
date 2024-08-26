@@ -12,7 +12,7 @@ function ChatMessage({ text, type }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`p-4 rounded-lg my-2 max-w-xs ${messageStyle} ${alignment}`}
+      className={`p-4 rounded-lg my-2 max-w-xl ${messageStyle} ${alignment}`}
     >
       {text}
     </motion.div>
