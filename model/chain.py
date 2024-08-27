@@ -25,25 +25,25 @@ def create_chain(vectorStore):
     # Define metadata field information
     metadata_field_info = [
         AttributeInfo(
-            name="Course",
+            name="course",
             description='The course relevant to the document. You must pick one of "Programming", "3D Design" or "Other".',
             type="string",
         ),
         AttributeInfo(
-            name="Subject",
+            name="subject",
             description="The subject relevant to the document. One of 'Programming', 'Electronics', '3D Design', 'Manufacturing' or 'Other'.",
             type="string",
         ),
-        AttributeInfo(
-            name="Scope",
-            description="The scope of the document. One of 'Introduction', 'Basics', 'Lab Activity', 'Project' or 'Other'.",
-            type="string",
-        ),
-        AttributeInfo(
-            name="Difficulty_level",
-            description="The difficulty level of the content, on a scale of 1-5",
-            type="integer",
-        ),
+        # AttributeInfo(
+        #     name="Scope",
+        #     description="The scope of the document. One of 'Introduction', 'Basics', 'Lab Activity', 'Project' or 'Other'.",
+        #     type="string",
+        # ),
+        # AttributeInfo(
+        #     name="Difficulty_level",
+        #     description="The difficulty level of the content, on a scale of 1-5",
+        #     type="integer",
+        # ),
     ]
 
     document_content_description = "Brief description of educational content"
@@ -62,11 +62,13 @@ def create_chain(vectorStore):
         ("human", "{input}"),
         ("human", "Given the above conversation, generate a search query to look up in order to get information relevant to the " +
                 "conversation from the knowledge base. Additionally we are filtering the database for the most relevant vectors before " +
-                "doing the similarity search. Filtering criteria are Course[one of 'Programming', '3D Design' or 'Other'], Subject[one " +
-                "of 'Programming', 'Electronics', '3D Design', 'Manufacturing' or 'Other'], Scope[one of 'Introduction', 'Basics', " +
-                "'Lab Activity', 'Project' or 'Other'], Difficulty_level[1-5]. Your response must contain the search query and the " +
+                "doing the similarity search. Filtering criteria are course[one of 'Programming', '3D Design' or 'Other'], and subject[one " +
+                "of 'Programming', 'Electronics', '3D Design', 'Manufacturing' or 'Other']. Your response must contain the search query and the " +
                 "filtering criteria. Do not include anything else."),
     ])
+
+
+# , Scope[one of 'Introduction', 'Basics', 'Lab Activity', 'Project' or 'Other'], Difficulty_level[1-5]
 
     history_aware_retriever = create_history_aware_retriever(
         llm=model,
